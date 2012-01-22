@@ -14,6 +14,11 @@ class MY_Uri extends CI_Uri {
 	 */
 	private $format_regex = '/^(.*)\.(\w{3,})$/';
 
+	public function __construct() {
+		parent::__construct();
+		$this->config->load('uri');
+	}
+
 	/**
 	 * Get Format
 	 */
