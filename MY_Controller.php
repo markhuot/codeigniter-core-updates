@@ -80,6 +80,17 @@ class MY_Controller extends CI_Controller {
 			redirect(substr($view, 1));
 		}
 
+		// Setup some default data. We'll take the session flashdata, if it
+		// exists and push it onto the data passed to the template
+		if (isset($this->session) && !isset($this->data['flashdata'])) {
+			$this->data['flashdata'] = new stdClass;
+			foreach ($this->session->all_userdata() as $key => $value) {
+				if (preg_match('/^flash:old:(.*)$/', $key, $match)) {
+					$this->data['flashdata']->{$match[1]} = $value;
+				}
+			}
+		}
+
 		// Finally, render out the template; assuming the developer still
 		// wants us to.
 		$this->template->render($view, $this->data);
