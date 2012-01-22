@@ -6,7 +6,7 @@ class MY_Uri extends CI_Uri {
 	 * The default format for URIs without a suffix. For example blog/posts may
 	 * be defined as a HTML format or a JSON format.
 	 */
-	private $format = FALSE;
+	private $format = 'html';
 
 	/**
 	 * $format_regex
@@ -17,12 +17,17 @@ class MY_Uri extends CI_Uri {
 	/**
 	 * Get Format
 	 */
-	public function format($fallback=FALSE) {
-		if (!$this->format && $fallback) {
-			return $fallback;
-		}
-
+	public function format() {
 		return $this->format;
+	}
+
+	/**
+	 * Remove URL Suffix overrides the existing CI method to remove ANY format,
+	 * not just the single format defined in the config.
+	 */
+	public function _remove_url_suffix() {
+		$this->format = $this->format_from_uri($this->uri_string);
+		$this->uri_string = $this->remove_format_from_uri($this->uri_string);
 	}
 
 	public function format_from_uri($uri) {
@@ -31,23 +36,24 @@ class MY_Uri extends CI_Uri {
 			$uri,
 			$parts
 		);
-		return @$parts[2];
+
+		if (@$parts[2]) {
+			return @$parts[2];
+		}
+
+		if ($this->config->item('default_format')) {
+			return $this->config->item('default_format');
+		}
+
+		return $this->format;
 	}
 
-	public function remove_format_from_uri($uri) {
+	private function remove_format_from_uri($uri) {
 		preg_match(
 			$this->format_regex,
 			$uri,
 			$parts
 		);
 		return @$parts[1]?:$uri;
-	}
-
-	/**
-	 * Remove URL Suffix
-	 */
-	public function _remove_url_suffix() {
-		$this->format = $this->format_from_uri($this->uri_string);
-		$this->uri_string = $this->remove_format_from_uri($this->uri_string);
 	}
 }

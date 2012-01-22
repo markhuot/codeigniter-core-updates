@@ -8,13 +8,6 @@ class MY_Controller extends CI_Controller {
 	protected $data;
 
 	/**
-	 * $default_format
-	 * Sets the default format to be used when no suffix is included in the
-	 * URI.
-	 */
-	protected $default_format = 'html';
-
-	/**
 	 * $formats
 	 * An array of respondable formats. This maps the request type to a
 	 * template and a template language, some examples included.
@@ -32,8 +25,6 @@ class MY_Controller extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->driver('template');
-		$this->default_format = $this->config->item('default_format')?:
-			$this->default_format;
 	}
 
 	/**
@@ -66,7 +57,7 @@ class MY_Controller extends CI_Controller {
 		);
 
 		// Get the format from the URI.
-		$format = $this->uri->format($this->default_format);
+		$format = $this->uri->format();
 
 		// Is a specific view defined for this format?
 		if (isset($this->formats[$format])) {
@@ -97,7 +88,7 @@ class MY_Controller extends CI_Controller {
 		// parser used to generate the page. For example a JSON request could
 		// be driven by a `twig` template. In this case we'll want to pull the
 		// content type from `json` even though the template engine is `twig`.
-		$parser = $this->uri->format($this->default_format);
+		$parser = $this->uri->format();
 		$content_type = $this->template->{$parser}->content_type;
 		$this->output->set_content_type($content_type);
 	}
