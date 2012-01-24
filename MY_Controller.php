@@ -43,10 +43,17 @@ class MY_Controller extends CI_Controller {
 		$before = get_object_vars($this);
 
 		// Call the method
-		call_user_func_array(
-			array($this, $method),
-			array_slice($this->uri->rsegments, 2)
-		);
+		try {
+			call_user_func_array(
+				array($this, $method),
+				array_slice($this->uri->rsegments, 2)
+			);
+		}
+
+		// Catch any errors the method throws
+		catch (Exception $e) {
+			show_error($e->getMessage());
+		}
 
 		// Get the state of our controller after running the method
 		$after = get_object_vars($this);
