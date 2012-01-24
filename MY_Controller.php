@@ -39,11 +39,28 @@ class MY_Controller extends CI_Controller {
 			show_404();
 		}
 
+		// Store the state of our controller prior to the method call
+		$before = get_object_vars($this);
+
 		// Call the method
 		call_user_func_array(
 			array($this, $method),
 			array_slice($this->uri->rsegments, 2)
 		);
+
+		// Get the state of our controller after running the method
+		$after = get_object_vars($this);
+
+		// Figure out if anything changed. If it did then we'll want to add
+		// those changes into the data array unless their name begins with an
+		// underscore.
+		$diff = array_diff(array_keys($after), array_keys($before));
+		foreach ($diff as $key) {
+			if (substr($key, 0, 1) == '_') {
+				continue;
+			}
+			$this->data[$key] = $this->{$key};
+		}
 
 		// Simplify the class variable
 		$class = $this->router->class;
