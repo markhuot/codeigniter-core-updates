@@ -8,6 +8,13 @@ class MY_Controller extends CI_Controller {
 	protected $data;
 
 	/**
+	 * Our before and after filters. These allow us to avoid overriding the
+	 * constructor.
+	 */
+	protected $before_filter = array();
+	protected $after_filter = array();
+
+	/**
 	 * $formats
 	 * An array of respondable formats. This maps the request type to a
 	 * template and a template language, some examples included.
@@ -40,18 +47,7 @@ class MY_Controller extends CI_Controller {
 		}
 
 		// Run our :before_filter
-		if (isset($this->before_filter)) {
-			if (is_string($this->before_filter)) {
-				$this->before_filter = array($this->before_filter);
-			}
-
-			foreach ($this->before_filter as $before_method) {
-				call_user_func_array(
-					array($this, $before_method),
-					array()
-				);
-			}
-		}
+		$this->run_filter('before');
 
 		// Store the state of our controller prior to the method call
 		$before = get_object_vars($this);
@@ -84,18 +80,7 @@ class MY_Controller extends CI_Controller {
 		}
 
 		// Run our :after_filter
-		if (isset($this->after_filter)) {
-			if (is_string($this->after_filter)) {
-				$this->after_filter = array($this->after_filter);
-			}
-
-			foreach ($this->after_filter as $after_method) {
-				call_user_func_array(
-					array($this, $after_method),
-					array()
-				);
-			}
-		}
+		$this->run_filter('after');
 
 		// Simplify the class variable
 		$class = $this->router->class;
@@ -154,6 +139,28 @@ class MY_Controller extends CI_Controller {
 		$parser = $this->uri->format();
 		$content_type = $this->template->{$parser}->content_type;
 		$this->output->set_content_type($content_type);
+	}
+
+	/**
+	 * Run the before and after filters.
+	 */
+	private function run_filter($who) {
+		$filter = $this->{"{$who}_filter"};
+
+		if (is_string($filter)) {
+			$filter = array($filter);
+		}
+
+		if (method_exists($this, "{$who}_filter")) {
+			$filter[] = "{$who}_filter";
+		}
+
+		foreach ($filter as $method) {
+			call_user_func_array(
+				array($this, $method),
+				array_slice($this->uri->rsegments, 2)
+			);
+		}
 	}
 
 	/**
