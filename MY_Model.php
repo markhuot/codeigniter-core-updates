@@ -74,6 +74,10 @@ class MY_Model extends CI_Model {
 		return @$result[0];
 	}
 
+	public function all() {
+		return $this->get();
+	}
+
 	public function __call($method, $args) {
 		if (preg_match('/get_by_(.*)/', $method, $matches)) {
 			return $this->first(array(
