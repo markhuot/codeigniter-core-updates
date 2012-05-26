@@ -127,6 +127,9 @@ class Posts extends MY_Controller {
 }
 ```
 
+Of note: If you set the `content_type` to `text/json` errors and data returned
+from your controller will be automatically wrapped in `json_encode()`.
+
 ### Errors
 
 Any exceptions thrown and not caught during execution of the controller method, the before, or the after filters will be presented within the CI `show_error` function. The method will be passed the `getMessage()` value of the exception.

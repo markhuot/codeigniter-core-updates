@@ -83,6 +83,9 @@ class MY_Controller extends CI_Controller {
 		// If we have return data from the controller method stop here and just
 		// render that out.
 		if ($return) {
+			if ($this->content_type == 'text/json') {
+				$return = json_encode($return);
+			}
 			$this->output->set_output($return);
 			return;
 		}
