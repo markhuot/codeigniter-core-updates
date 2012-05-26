@@ -3,6 +3,7 @@
 class MY_Model extends CI_Model {
 
 	protected $_table = FALSE;
+	protected $_class = FALSE;
 	protected $_primary_key = 'id';
 	protected $_default_scope = array(
 		// 'where' => array(),
@@ -17,13 +18,21 @@ class MY_Model extends CI_Model {
 
 	public function table() {
 		if (!$this->_table) {
-			$this->_table = get_class($this);
-			$this->_table = preg_replace('/_model$/', '', $this->_table);
-			$this->_table = strtolower($this->_table);
+			$this->_table = $this->class();
 			$this->_table = plural($this->_table);
 		}
 
 		return $this->_table;
+	}
+
+	public function class() {
+		if (!$this->_class) {
+			$this->_class = get_class($this);
+			$this->_class = preg_replace('/_model$/', '', $this->_table);
+			$this->_class = strtolower($this->_table);
+		}
+
+		return $this->_class;
 	}
 
 	public function count() {
@@ -75,8 +84,11 @@ class MY_Model extends CI_Model {
 	}
 
 	public function first($opts=array()) {
-		$result = $this->get($opts);
-		return @$result[0];
+		if ($result = $this->get($opts)) {
+			return @$result[0];
+		}
+
+		throw new Exception("That {$this->class()} could not be found.");
 	}
 
 	public function all() {
