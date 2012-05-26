@@ -117,7 +117,7 @@ class MY_Controller extends CI_Controller {
 	/**
 	 * Run the before and after filters.
 	 */
-	private function run_filter($who) {
+	private function run_filter($who, $params=array()) {
 		$filter = $this->{"{$who}_filter"};
 
 		if (is_string($filter)) {
