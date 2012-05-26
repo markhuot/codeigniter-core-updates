@@ -113,7 +113,7 @@ A few common headers are automatically applied to all requests.
 
 #### Content Type
 
-The `Content-type` header defaults to `text/html` unless it is overridden in the controller or via a URL suffix. In the controller it is overriden with the class variable `$content_type`. As a URL suffix the file extension is mapped to a mime type via the `application/config/mimes.php` mappings. If multiple mime types are present for a paticular extension the first one listed will be used.
+The `Content-type` header defaults to `text/html` unless it is overridden in the controller or via a URL suffix. In the controller it is overridden with the class variable `$content_type`. As a URL suffix the file extension is mapped to a mime type via the `application/config/mimes.php` mappings. If multiple mime types are present for a particular extension the first one listed will be used.
 
 ```php
 <?php
