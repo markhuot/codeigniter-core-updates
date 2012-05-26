@@ -8,7 +8,8 @@ These core updates represent a shift in the expectation of CodeIgniter. They imp
 
 Method names have been updated to include a METHOD prefix. Typically, that means you'd be prefacing methods with `get_`, however `post_`, `put_`, and any other valid request methods are valid.
 
-```php <?php
+```php
+<?php
 class Posts extends MY_Controller {
     public function get_index() {
         // ...
