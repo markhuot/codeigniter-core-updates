@@ -22,6 +22,7 @@ class Posts extends MY_Controller {
 Two filters are added to all controllers, `before` and `after`. They may be defined as a single method, an array of methods, or a protected method.
 
 ```php
+<?php
 class Posts extends MY_Controller {
     protected $before_filter = 'log_views';
     protected $before_filter = array('log_views', 'check_auth');
@@ -41,6 +42,7 @@ class Posts extends MY_Controller {
 View loading is now automated and therefore called after every controller method. The name of the view is inferred from the class name and the method name. So, `Posts::get_index()` would load a view: `posts/index` and `Users::post_confirm()` would load `users/confirm`. You can override this by setting the `view` class variable.
 
 ```php
+<?php
 class Posts extends MY_Controller {
     public function get_index() {
         // ... loads view: posts/index.php
@@ -55,6 +57,7 @@ class Posts extends MY_Controller {
 To pass data to a view simply set the variable as a member of the controller class. Any class variables set after `__construct` runs will be passed to the view.
 
 ```php
+<?php
 class Posts extends MY_Controller {
     public function __construct() {
         $this->lib = // ... not passed to view
@@ -74,6 +77,7 @@ By default, all views are loaded within a global application layout. The layout 
 The layout is rendered with the contents of the sub-view contained within the `$yield` variable. In addition, the layout has access to any class variables defined within the controller method or the sub-view.
 
 ```php
+<?php
 // controllers/posts.php
 class Posts extends MY_Controller {
     public function get_index() {
@@ -110,6 +114,7 @@ A few common headers are automatically applied to all requests. They are:
 To override the defaults set the class variables within your controller or within your methods.
 
 ```php
+<?php
 class Posts extends MY_Controller {
     protected $content_type = 'application/xml';
     public function get_index() {
