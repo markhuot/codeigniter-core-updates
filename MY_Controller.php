@@ -46,21 +46,17 @@ class MY_Controller extends CI_Controller {
 		// Get the state of the controller before running any methods
 		$before = get_object_vars($this);
 
-		// Run our :before_filter
-		$this->run_filter('before', $params);
-
 		// Call the method
 		try {
+			$this->run_filter('before', $params);
 			$return = call_user_func_array(array($this, $method), $params);
+			$this->run_filter('after', $params);
 		}
 
 		// Catch any errors the method throws
 		catch (Exception $e) {
 			show_error($e->getMessage());
 		}
-
-		// Run our :after_filter
-		$this->run_filter('after', $params);
 
 		// Get the state of our controller after running the method
 		$after = get_object_vars($this);
