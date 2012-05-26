@@ -69,6 +69,7 @@ class MY_Controller extends CI_Controller {
 			if ($this->content_type == 'application/json') {
 				$this->output->set_content_type($this->content_type);
 				$err = array();
+				$err['error'] = true;
 				$err['message'] = $e->getMessage();
 				$err['code'] = $e->getCode();
 				if (ENVIRONMENT == 'development') {
