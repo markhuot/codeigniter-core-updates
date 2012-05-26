@@ -56,7 +56,16 @@ class MY_Controller extends CI_Controller {
 		// Catch any errors the method throws
 		catch (Exception $e) {
 			if ($this->content_type == 'text/json') {
-				die(json_encode($e));
+				$this->output->set_content_type($this->content_type);
+				$err = array();
+				$err['message'] = $e->getMessage();
+				$err['code'] = $e->getCode();
+				if (ENVIRONMENT == 'development') {
+					$err['file'] = $e->getFile();
+					$err['line'] = $e->getLine();
+				}
+				$this->output->set_output(json_encode($err));
+				return;
 			}
 			else {
 				show_error($e->getMessage());
