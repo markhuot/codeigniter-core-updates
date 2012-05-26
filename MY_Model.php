@@ -87,8 +87,6 @@ class MY_Model extends CI_Model {
 
 }
 
-<?php
-
 if (!function_exists('array_merge_recursive_overwrite')) {
 	function array_merge_recursive_overwrite() {
 
