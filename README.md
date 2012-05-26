@@ -90,13 +90,13 @@ class Posts extends MY_Controller {
 ```
 
 ```html
-// views/posts/index.php
+<!-- views/posts/index.php -->
 <?php $this->title = 'test'; ?>
 <div> ... </div>
 ```
 
 ```html
-// views/application/layout.php
+<!-- views/application/layout.php -->
 <html>
 <head>
     <title><?=$title?></title>
