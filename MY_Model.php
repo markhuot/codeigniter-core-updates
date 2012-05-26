@@ -36,7 +36,7 @@ class MY_Model extends CI_Model {
 			foreach ($opts['select'] as $field => $name) {
 				if (is_numeric($field)) {
 					$this->db->select($name);
-				} else if (strpos($field, '"') !== FALSE) {
+				} else if (preg_match('/[^a-z0-9_-]/i', $field)) {
 					$this->db->select("{$field} as {$name}", FALSE);
 				} else {
 					$this->db->select("{$field} as {$name}");
@@ -66,7 +66,7 @@ class MY_Model extends CI_Model {
 			$this->db->limit(@$opts['limit'], @$opts['offset']);
 		}
 
-		return $this->db->get($this->table())->result_array();
+		return $this->db->get($this->table())->result();
 	}
 
 	public function first($opts=array()) {
@@ -82,6 +82,14 @@ class MY_Model extends CI_Model {
 				)
 			));
 		}
+	}
+
+	public function includes($what) {
+		return $this;
+	}
+
+	public function joins($what) {
+		return $this;
 	}
 
 }
