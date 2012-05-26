@@ -109,12 +109,17 @@ class Posts extends MY_Controller {
 
 ### Headers
 
-A few common headers are automatically applied to all requests. They are:
+A few common headers are automatically applied to all requests.
 
-* `Content-type: text/html`
-* `Cache-control: no-cache` (also sets `Edge-control: no-cache`)
+#### Content Type
 
-To override the defaults set the class variables within your controller or within your methods.
+The `Content-type` header defaults to `text/html` unless it is overridden in the controller or via a URL suffix. In the controller it is overriden with the class variable `$content_type`. As a URL suffix the file extension is mapped to a mime type via the `application/config/mimes.php` mappings. If multiple mime types are present for a paticular extension the last one listed will be used.
+
+#### Cache Control
+
+The `Cache-control` header defaults to `no-cache`, disabling any client side caching of HTML. You may override this however you like by setting the `$cache_control` class variable.
+
+This header also sets the, similar, `Edge-control` header with whatever is set for `Cache-control`.
 
 ```php
 <?php
@@ -127,7 +132,7 @@ class Posts extends MY_Controller {
 }
 ```
 
-Of note: If you set the `content_type` to `text/json` errors and data returned
+Of note: If the `content_type` is set to `text/json` errors and data returned
 from your controller will be automatically wrapped in `json_encode()`.
 
 ### Errors
