@@ -3,6 +3,7 @@
 class MY_Model extends CI_Model {
 
 	protected $_table = FALSE;
+	protected $_primary_key = 'id';
 	protected $_default_scope = array(
 		// 'where' => array(),
 		// 'order_by' => 'id ASC',
@@ -30,6 +31,10 @@ class MY_Model extends CI_Model {
 	}
 
 	public function get($opts=array()) {
+		if (is_numeric($opts)) {
+			$opts = array('where' => array($this->_primary_key => $opts));
+		}
+
 		$opts = array_merge_recursive_overwrite($this->_default_scope, $opts);
 
 		if (isset($opts['select'])) {
