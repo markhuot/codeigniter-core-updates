@@ -129,4 +129,4 @@ class Posts extends MY_Controller {
 
 ### Errors
 
-Any exceptions thrown and not caught during execution of the controller method, the before, or the after filters will be presented within the CI `show_error` method. The method will be passed the `getMessage()` value of the exception.
+Any exceptions thrown and not caught during execution of the controller method, the before, or the after filters will be presented within the CI `show_error` function. The method will be passed the `getMessage()` value of the exception.
