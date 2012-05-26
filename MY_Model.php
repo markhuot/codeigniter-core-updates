@@ -88,7 +88,7 @@ class MY_Model extends CI_Model {
 			return @$result[0];
 		}
 
-		throw new Exception("That {$this->class()} could not be found.");
+		throw new Exception("The specified {$this->class()} could not be found.");
 	}
 
 	public function all() {
