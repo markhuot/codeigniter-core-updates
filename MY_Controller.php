@@ -28,7 +28,7 @@ class MY_Controller extends CI_Controller {
 	 */
 	public function _remap($method, $params=array())
 	{
-		$this->view = strtolower(get_class($this)).'/'.$method);
+		$this->view = strtolower(get_class($this).'/'.$method);
 
 		$verb = strtolower($_SERVER['REQUEST_METHOD']);
 
