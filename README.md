@@ -62,6 +62,9 @@ class Posts extends MY_Controller {
     public function __construct() {
         $this->lib = // ... not passed to view
     }
+    protected function before_filter() {
+        $this->sidebar = // ... passed to view
+    }
     public function get_index() {
         $this->posts = // ... passed to view
     }
