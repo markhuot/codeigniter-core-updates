@@ -55,7 +55,12 @@ class MY_Controller extends CI_Controller {
 
 		// Catch any errors the method throws
 		catch (Exception $e) {
-			show_error($e->getMessage());
+			if ($this->content_type == 'text/json') {
+				die(json_encode($e));
+			}
+			else {
+				show_error($e->getMessage());
+			}
 		}
 
 		// Get the state of our controller after running the method
