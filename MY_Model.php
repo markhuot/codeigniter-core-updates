@@ -4,7 +4,7 @@ class MY_Model extends CI_Model {
 
 	protected $_table = FALSE;
 	protected $_default_scope = array(
-		// 'conditions' => array(),
+		// 'where' => array(),
 		// 'order_by' => 'id ASC',
 		// 'limit' => 100
 	);
@@ -51,8 +51,8 @@ class MY_Model extends CI_Model {
 			}
 		}
 
-		if (isset($opts['conditions'])) {
-			$this->db->where($opts['conditions']);
+		if (isset($opts['where'])) {
+			$this->db->where($opts['where']);
 		}
 
 		if (isset($opts['group_by'])) {
@@ -78,7 +78,7 @@ class MY_Model extends CI_Model {
 	public function __call($method, $args) {
 		if (preg_match('/get_by_(.*)/', $method, $matches)) {
 			return $this->first(array(
-				'conditions' => array(
+				'where' => array(
 					"{$this->table()}.{$matches[1]}" => $args[0]
 				)
 			));
