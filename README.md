@@ -113,7 +113,28 @@ A few common headers are automatically applied to all requests.
 
 #### Content Type
 
-The `Content-type` header defaults to `text/html` unless it is overridden in the controller or via a URL suffix. In the controller it is overriden with the class variable `$content_type`. As a URL suffix the file extension is mapped to a mime type via the `application/config/mimes.php` mappings. If multiple mime types are present for a paticular extension the last one listed will be used.
+The `Content-type` header defaults to `text/html` unless it is overridden in the controller or via a URL suffix. In the controller it is overriden with the class variable `$content_type`. As a URL suffix the file extension is mapped to a mime type via the `application/config/mimes.php` mappings. If multiple mime types are present for a paticular extension the first one listed will be used.
+
+```php
+<?php
+class Posts extends MY_Controller {
+    protected $content_type = 'application/xml'; // ... all methods default to xml
+    public function get_index() {
+        $this->content_type = 'application/json'; // ... this method returns JSON
+    }
+}
+```
+
+Using URL suffixes a request to posts/index.json would return a JSON array of posts given the following controller:
+
+```php
+<?php
+class Posts extends MY_Controller {
+    public function get_index() {
+        return $this->db->get('posts')->result_array();
+    }
+}
+```
 
 #### Cache Control
 
@@ -124,10 +145,9 @@ This header also sets the, similar, `Edge-control` header with whatever is set f
 ```php
 <?php
 class Posts extends MY_Controller {
-    protected $content_type = 'application/xml';
+    protected $this->cache_control = 'max-age=86400, public';
     public function get_index() {
-        $this->content_type = 'text/json';
-        $this->cache_control = 'max-age=300, public'
+        $this->cache_control = 'max-age=300, public';
     }
 }
 ```
