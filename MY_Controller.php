@@ -28,9 +28,20 @@ class MY_Controller extends CI_Controller {
 	 */
 	public function _remap($method, $params=array())
 	{
+		// Determine the default view
 		$this->view = strtolower(get_class($this).'/'.$method);
 
+		// Get the request verb
 		$verb = strtolower($_SERVER['REQUEST_METHOD']);
+
+		// Check if the type is defined via URL suffix
+		$suffix = FALSE;
+		$match = '/\.([^.]{3,})$/';
+		if (preg_match($match, $method, $matches)) {
+			$this->load->helper('file');
+			$this->content_type = get_mime_by_extension($method);
+			$method = preg_replace($match, '', $method);
+		}
 
 		// If the method doesn't exist bail out.
 		if (method_exists($this, "{$verb}_{$method}")) {
@@ -55,7 +66,7 @@ class MY_Controller extends CI_Controller {
 
 		// Catch any errors the method throws
 		catch (Exception $e) {
-			if ($this->content_type == 'text/json') {
+			if ($this->content_type == 'application/json') {
 				$this->output->set_content_type($this->content_type);
 				$err = array();
 				$err['message'] = $e->getMessage();
@@ -92,7 +103,7 @@ class MY_Controller extends CI_Controller {
 		// If we have return data from the controller method stop here and just
 		// render that out.
 		if ($return) {
-			if ($this->content_type == 'text/json') {
+			if ($this->content_type == 'application/json') {
 				$return = json_encode($return);
 			}
 			$this->output->set_output($return);
