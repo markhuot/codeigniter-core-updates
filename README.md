@@ -1,5 +1,7 @@
 # Core Updates
 
+These core updates represent a shift in the expectation of CodeIgniter. They implement some convention, instead of CI-style configuration. They're not for everyone but definitely for me.
+
 ## Controller
 
 ### Method Names
