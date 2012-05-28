@@ -23,8 +23,8 @@ class MY_Controller extends CI_Controller {
 
 	/**
 	 * Remap
-	 * Overrides each request and allows us to automatically call the template
-	 * parser after the controller's method has run.
+	 * Overrides each request and allows us to automatically call the view
+	 * after the controller's method has run.
 	 */
 	public function _remap($method, $params=array())
 	{
