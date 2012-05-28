@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class MY_Model extends CI_Model {
+class MY_Model extends MY_Record {
 
 	protected $_table = FALSE;
 	protected $_primary_key = 'id';
@@ -10,10 +10,9 @@ class MY_Model extends CI_Model {
 		// 'order_by' => 'id ASC',
 		// 'limit' => 100
 	);
-	private $_attributes = new stdClass;
 
-	public function __construct() {
-		parent::__construct();
+	public function __construct($attributes=array()) {
+		parent::__construct($attributes);
 		$this->load->helper('inflector');
 	}
 
@@ -28,6 +27,10 @@ class MY_Model extends CI_Model {
 		return $this->_table;
 	}
 
+	public function primary_key() {
+		return $this->_primary_key;
+	}
+
 	public function count() {
 		return $this->db->count_all($this->table());
 	}
@@ -35,14 +38,14 @@ class MY_Model extends CI_Model {
 	public function get($opts=array()) {
 		if (is_numeric($opts)) {
 			return $this->first(array(
-				'where' => array($this->_primary_key => $opts)
+				'where' => array("{$this->table}.{$this->primary_key}" => $opts)
 			));
 		}
-		else if (is_numeric(key(array_keys($opts)))) {
-			return $this->get(array(
-				'where' => array("{$this->_primary_key} IN ?" => $opts)
-			));
-		}
+		// else if (is_numeric(key(array_keys($opts)))) {
+		// 	return $this->get(array(
+		// 		'where' => array("{$this->_primary_key} IN ?" => $opts)
+		// 	));
+		// }
 
 		$opts = array_merge_recursive_overwrite($this->_default_scope, $opts);
 
@@ -80,9 +83,10 @@ class MY_Model extends CI_Model {
 			$this->db->limit(@$opts['limit'], @$opts['offset']);
 		}
 
+		$class = get_class($this);
 		$result = $this->db->get($this->table())->result();
 		foreach ($result as &$record) {
-			$record = new MY_Record($this, $record);
+			$record = new $class($record);
 		}
 		return $result;
 	}
@@ -111,6 +115,16 @@ class MY_Model extends CI_Model {
 				)
 			));
 		}
+
+		return parent::__call($method, $args);
+	}
+
+	public function __get($key) {
+		if (method_exists($this, $key)) {
+			return call_user_func(array($this, $key));
+		}
+		
+		return parent::__get($key);
 	}
 
 	public function includes($what) {
@@ -125,32 +139,19 @@ class MY_Model extends CI_Model {
 
 class MY_Record extends CI_Model {
 
-	private $_attributes = new stdClass;
-	private $_model;
-
-	public function __construct($model, $record=FALSE) {
+	public function __construct($attributes=array()) {
 		parent::__construct();
-		$this->_model = $model;
-		$this->_attributes = $record;
-	}
-
-	public function __toString() {
-		return "{$this->model} Record {$this->id}";
+		foreach ($attributes as $key => $value) {
+			$this->{$key} = $value;
+		}
 	}
 
 	public function __get($key) {
-		if (method_exists($this, $key)) {
-			return call_user_func(array($this, $key));
-		}
-		else if (isset($this->_attributes->{$key})) {
-			return $this->_attributes->{$key};
-		}
-
-		return FALSE;
+		return parent::__get($key);
 	}
 
 	public function id() {
-		return $this->_attributes->{$this->model->primary_key};
+		return $this->{$this->primary_key};
 	}
 
 }
