@@ -37,10 +37,19 @@ class MY_Controller extends CI_Controller {
 		// Check if the type is defined via URL suffix
 		$suffix = FALSE;
 		$match = '/\.([^.]{3,})$/';
+		$this->load->helper('file');
+
+		// If it's defined on the method, clean it up
 		if (preg_match($match, $method, $matches)) {
-			$this->load->helper('file');
 			$this->content_type = get_mime_by_extension($method);
 			$method = preg_replace($match, '', $method);
+		}
+
+		// If it's defined on the last parameter, clean it up
+		$last_param = end($params);
+		if (preg_match($match, $last_param, $matches)) {
+			$this->content_type = get_mime_by_extension($last_param);
+			$params[count($params)-1] = preg_replace($match, '', $last_param);
 		}
 
 		// If the method doesn't exist bail out.
