@@ -1,15 +1,16 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class MY_Model extends CI_Model {
 
 	protected $_table = FALSE;
-	protected $_class = FALSE;
 	protected $_primary_key = 'id';
 	protected $_default_scope = array(
 		// 'where' => array(),
+		// 'group_by' => 'title',
 		// 'order_by' => 'id ASC',
 		// 'limit' => 100
 	);
+	private $_attributes = new stdClass;
 
 	public function __construct() {
 		parent::__construct();
@@ -18,21 +19,13 @@ class MY_Model extends CI_Model {
 
 	public function table() {
 		if (!$this->_table) {
-			$this->_table = $this->class();
+			$this->_table = get_class($this);
+			$this->_table = preg_replace('/_model$/', '', $this->_table);
+			$this->_table = strtolower($this->_table);
 			$this->_table = plural($this->_table);
 		}
 
 		return $this->_table;
-	}
-
-	public function class() {
-		if (!$this->_class) {
-			$this->_class = get_class($this);
-			$this->_class = preg_replace('/_model$/', '', $this->_table);
-			$this->_class = strtolower($this->_table);
-		}
-
-		return $this->_class;
 	}
 
 	public function count() {
@@ -41,7 +34,14 @@ class MY_Model extends CI_Model {
 
 	public function get($opts=array()) {
 		if (is_numeric($opts)) {
-			$opts = array('where' => array($this->_primary_key => $opts));
+			return $this->first(array(
+				'where' => array($this->_primary_key => $opts)
+			));
+		}
+		else if (is_numeric(key(array_keys($opts)))) {
+			return $this->get(array(
+				'where' => array("{$this->_primary_key} IN ?" => $opts)
+			));
 		}
 
 		$opts = array_merge_recursive_overwrite($this->_default_scope, $opts);
@@ -80,7 +80,11 @@ class MY_Model extends CI_Model {
 			$this->db->limit(@$opts['limit'], @$opts['offset']);
 		}
 
-		return $this->db->get($this->table())->result();
+		$result = $this->db->get($this->table())->result();
+		foreach ($result as &$record) {
+			$record = new MY_Record($this, $record);
+		}
+		return $result;
 	}
 
 	public function first($opts=array()) {
@@ -88,11 +92,15 @@ class MY_Model extends CI_Model {
 			return @$result[0];
 		}
 
-		throw new Exception("The specified {$this->class()} could not be found.");
+		throw new Exception("The {$this} could not be found.");
 	}
 
 	public function all() {
 		return $this->get();
+	}
+
+	public function __toString() {
+		return singular($this->table());
 	}
 
 	public function __call($method, $args) {
@@ -111,6 +119,38 @@ class MY_Model extends CI_Model {
 
 	public function joins($what) {
 		return $this;
+	}
+
+}
+
+class MY_Record extends CI_Model {
+
+	private $_attributes = new stdClass;
+	private $_model;
+
+	public function __construct($model, $record=FALSE) {
+		parent::__construct();
+		$this->_model = $model;
+		$this->_attributes = $record;
+	}
+
+	public function __toString() {
+		return "{$this->model} Record {$this->id}";
+	}
+
+	public function __get($key) {
+		if (method_exists($this, $key)) {
+			return call_user_func(array($this, $key));
+		}
+		else if (isset($this->_attributes->{$key})) {
+			return $this->_attributes->{$key};
+		}
+
+		return FALSE;
+	}
+
+	public function id() {
+		return $this->_attributes->{$this->model->primary_key};
 	}
 
 }
