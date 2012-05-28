@@ -41,11 +41,6 @@ class MY_Model extends MY_Record {
 				'where' => array("{$this->table}.{$this->primary_key}" => $opts)
 			));
 		}
-		// else if (is_numeric(key(array_keys($opts)))) {
-		// 	return $this->get(array(
-		// 		'where' => array("{$this->_primary_key} IN ?" => $opts)
-		// 	));
-		// }
 
 		$opts = array_merge_recursive_overwrite($this->_default_scope, $opts);
 
